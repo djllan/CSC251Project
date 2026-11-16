@@ -1,71 +1,93 @@
 
-
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class PROJECT_DILLAN_REID_WILSON
 {
     public static void main(String[] args)
     {
-        Scanner keyboard = new Scanner(System.in);
+        ArrayList<Policy> policies = new ArrayList<Policy>();
 
-        System.out.print("Please enter the Policy Number: ");
-        int policyNumber = keyboard.nextInt();
-        keyboard.nextLine();
-        System.out.println();
+        int smokerCount = 0;
+        int nonSmokerCount = 0;
 
-        System.out.print("Please enter the Provider Name: ");
-        String providerName = keyboard.nextLine();
-        System.out.println();
+        try
+        {
+            Scanner fileInput = new Scanner(new File("PolicyInformation.txt"));
 
-        System.out.print("Please enter the Policyholder’s First Name: ");
-        String firstName = keyboard.nextLine();
-        System.out.println();
+            while (fileInput.hasNextLine())
+            {
+                String policyLine = fileInput.nextLine().trim();
 
-        System.out.print("Please enter the Policyholder’s Last Name: ");
-        String lastName = keyboard.nextLine();
-        System.out.println();
+                if (!policyLine.equals(""))
+                {
+                    int policyNumber = Integer.parseInt(policyLine);
 
-        System.out.print("Please enter the Policyholder’s Age: ");
-        int age = keyboard.nextInt();
-        keyboard.nextLine();
-        System.out.println();
+                    String providerName = fileInput.nextLine().trim();
+                    String firstName = fileInput.nextLine().trim();
+                    String lastName = fileInput.nextLine().trim();
+                    int age = Integer.parseInt(fileInput.nextLine().trim());
+                    String smokingStatus = fileInput.nextLine().trim();
+                    double height = Double.parseDouble(fileInput.nextLine().trim());
+                    double weight = Double.parseDouble(fileInput.nextLine().trim());
 
-        System.out.print("Please enter the Policyholder’s Smoking Status (smoker/non-smoker): ");
-        String smokingStatus = keyboard.nextLine();
-        System.out.println();
+                    Policy policy = new Policy(policyNumber,
+                            providerName, firstName, lastName, age,
+                            smokingStatus, height, weight);
 
-        System.out.print("Please enter the Policyholder’s Height (in inches): ");
-        double height = keyboard.nextDouble();
-        System.out.println();
+                    policies.add(policy);
+                }
+            }
 
-        System.out.print("Please enter the Policyholder’s Weight (in pounds): ");
-        double weight = keyboard.nextDouble();
+            fileInput.close();
 
-        Policy policy = new Policy(policyNumber, providerName,
-                firstName, lastName, age, smokingStatus,
-                height, weight);
+            for (int i = 0; i < policies.size(); i++)
+            {
+                Policy policy = policies.get(i);
 
-        System.out.println();
-        System.out.println("Policy Number: " + policy.getPolicyNumber());
-        System.out.println();
-        System.out.println("Provider Name: " + policy.getProviderName());
-        System.out.println();
-        System.out.println("Policyholder’s First Name: " + policy.getFirstName());
-        System.out.println();
-        System.out.println("Policyholder’s Last Name: " + policy.getLastName());
-        System.out.println();
-        System.out.println("Policyholder’s Age: " + policy.getAge());
-        System.out.println();
-        System.out.println("Policyholder’s Smoking Status: " + policy.getSmokingStatus());
-        System.out.println();
-        System.out.println("Policyholder’s Height: " + policy.getHeight() + " inches");
-        System.out.println();
-        System.out.println("Policyholder’s Weight: " + policy.getWeight() + " pounds");
-        System.out.println();
-        System.out.printf("Policyholder’s BMI: %.2f%n", policy.calculateBMI());
-        System.out.println();
-        System.out.printf("Policy Price: $%.2f%n", policy.calculatePolicyPrice());
+                System.out.println("Policy Number: " +
+                        policy.getPolicyNumber());
+                System.out.println("Provider Name: " +
+                        policy.getProviderName());
+                System.out.println("Policyholder's First Name: " +
+                        policy.getFirstName());
+                System.out.println("Policyholder's Last Name: " +
+                        policy.getLastName());
+                System.out.println("Policyholder's Age: " +
+                        policy.getAge());
+                System.out.println("Policyholder's Smoking Status (smoker/non-smoker): " +
+                        policy.getSmokingStatus());
+                System.out.println("Policyholder's Height: " +
+                        policy.getHeight() + " inches");
+                System.out.println("Policyholder's Weight: " +
+                        policy.getWeight() + " pounds");
+                System.out.printf("Policyholder's BMI: %.2f%n",
+                        policy.calculateBMI());
+                System.out.printf("Policy Price: $%.2f%n",
+                        policy.calculatePolicyPrice());
 
-        keyboard.close();
+                System.out.println();
+
+                if (policy.getSmokingStatus().equalsIgnoreCase("smoker"))
+                {
+                    smokerCount++;
+                }
+                else
+                {
+                    nonSmokerCount++;
+                }
+            }
+
+            System.out.println("The number of policies with a smoker is: " +
+                    smokerCount);
+            System.out.println("The number of policies with a non-smoker is: " +
+                    nonSmokerCount);
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("Error: PolicyInformation.txt was not found.");
+        }
     }
 }
